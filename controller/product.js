@@ -4,7 +4,15 @@ exports.createData = async (req, res) => {
   try {
 
     const data=req.body
-    data.images= req.file.filename
+
+
+    if (req.files && Array.isArray(req.files)) {
+    
+      data.images = req.files.map(file => file.filename);
+    } else if (req.file) { 
+      data.images = req.file.filename;
+    }
+
     const addData = await API.create(req.body);
 
     res.status(201).json({

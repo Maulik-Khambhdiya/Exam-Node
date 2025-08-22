@@ -4,8 +4,8 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 
 exports.createData = async (req, res) => {
-  try {
-    const transporter = nodemailer.createTransport({
+
+  const transporter = nodemailer.createTransport({
       host: "smtp.gmail.email",
       port: 587,
       secure: false, // true for 465, false for other ports
@@ -27,11 +27,13 @@ exports.createData = async (req, res) => {
 
       console.log("Message sent:", info.messageId);
     };
+  try {
+    
 
     const data = req.body;
     data.password = await bcrypt.hash(data.password, 10);
     data.profile = req.file.filename;
-    sendMail(email)
+    sendMail(data.email)
     const addData = await API.create(req.body);
     res.status(201).json({
       status: "success",
@@ -115,6 +117,10 @@ exports.loginUser = async (req, res) => {
       req.body.password,
       emailVerify.password
     );
+
+    console.log("original pass==>",req.body.password);
+    console.log("email pass==>",emailVerify.password);
+    
     if (!passwordVerify) throw new Error("Invalid password");
 
     const token = jwt.sign({ id: emailVerify._id }, "surat");
