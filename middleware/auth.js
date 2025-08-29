@@ -7,9 +7,13 @@ exports.authcheck = async (req, res, next) => {
     if (!token) throw new Error("Attach token");
 
     const tokenverify = jwt.verify(token, "surat");
+    console.log("tokenverify ==> ", tokenverify);
+
     if (!tokenverify) throw new Error("Invalid token");
 
     const userverify = await USER.findById(tokenverify.id);
+    console.log("userVerify ==> ", userverify);
+
     if (!userverify) throw new Error("Invalid User");
 
     next();

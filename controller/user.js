@@ -4,36 +4,33 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 
 exports.createData = async (req, res) => {
-
   const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.email",
-      port: 587,
-      secure: false, // true for 465, false for other ports
-      auth: {
-        user: "maulik.cdmi@gmail.com",
-        pass: "bwdrxgtkjddjctjr",
-      },
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false, // true for 465, false for other ports
+    auth: {
+      user: "maulik.cdmi@gmail.com",
+      pass: "bwdrxgtkjddjctjr",
+    },
+  });
+
+  // Wrap in an async IIFE so we can use await.
+  const sendMail = async (email) => {
+    const info = await transporter.sendMail({
+      from: "maulik.cdmi@gmail.com",
+      to: email,
+      subject: "Hello ✔",
+      text: "Hello world?", // plain‑text body
+      html: "<b>Hello world?</b>", // HTML body
     });
 
-    // Wrap in an async IIFE so we can use await.
-    const sendMail = async (email) => {
-      const info = await transporter.sendMail({
-        from: 'maulik.cdmi@gmail.com',
-        to: email,
-        subject: "Hello ✔",
-        text: "Hello world?", // plain‑text body
-        html: "<b>Hello world?</b>", // HTML body
-      });
-
-      console.log("Message sent:", info.messageId);
-    };
+    console.log("Message sent:", info.messageId);
+  };
   try {
-    
-
     const data = req.body;
     data.password = await bcrypt.hash(data.password, 10);
     data.profile = req.file.filename;
-    sendMail(data.email)
+    sendMail(data.email);
     const addData = await API.create(req.body);
     res.status(201).json({
       status: "success",
@@ -118,9 +115,9 @@ exports.loginUser = async (req, res) => {
       emailVerify.password
     );
 
-    console.log("original pass==>",req.body.password);
-    console.log("email pass==>",emailVerify.password);
-    
+    console.log("original pass==>", req.body.password);
+    console.log("email pass==>", emailVerify.password);
+
     if (!passwordVerify) throw new Error("Invalid password");
 
     const token = jwt.sign({ id: emailVerify._id }, "surat");
