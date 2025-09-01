@@ -83,15 +83,20 @@ exports.deleteData = async (req, res) => {
 };
 
 exports.editData = async (req, res) => {
+  console.log("updateData ==> ", req.body.password);
   try {
     const editId = req.params.id;
-
+    const data=req.body
+    
     const checkData = await API.findById(editId);
     if (!checkData) throw new Error("Data Not Found");
 
+
+    data.password = await bcrypt.hash(data.password, 10);
     const updateData = await API.findByIdAndUpdate(editId, req.body, {
       new: true,
     });
+
     res.status(200).json({
       status: "success",
       message: "Data Edit Successfully",
