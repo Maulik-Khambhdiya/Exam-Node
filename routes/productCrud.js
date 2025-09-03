@@ -19,5 +19,6 @@ const upload = multer({ storage: storage })
 
 productRouter.post("/",AM.authcheck,upload.array("images",10), AC.createData);
 productRouter.get("/",AM.authcheck, AC.viewData);
+productRouter.delete("/:id",AM.authcheck,AC.deleteData)
 
 module.exports=productRouter

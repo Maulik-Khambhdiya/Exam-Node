@@ -2,14 +2,11 @@ const API = require("../model/product");
 
 exports.createData = async (req, res) => {
   try {
-
-    const data=req.body
-
+    const data = req.body;
 
     if (req.files && Array.isArray(req.files)) {
-    
-      data.images = req.files.map(file => file.filename);
-    } else if (req.file) { 
+      data.images = req.files.map((file) => file.filename);
+    } else if (req.file) {
       data.images = req.file.filename;
     }
 
@@ -35,6 +32,27 @@ exports.viewData = async (req, res) => {
       status: "success",
       message: "Data Found Successfully",
       data: viewData,
+    });
+  } catch (error) {
+    res.status(404).json({
+      status: "Fail",
+      message: error.message,
+    });
+  }
+};
+
+exports.deleteData = async (req, res) => {
+  try {
+    const deleteId = req.params.id;
+
+    const checkData = await API.findById(deleteId);
+    if (!checkData) throw new Error("Data Not Found");
+
+    const deleteData = await API.findByIdAndDelete(deleteId);
+    res.status(200).json({
+      status: "success",
+      message: "Product Deleted Successfully",
+      data: deleteData,
     });
   } catch (error) {
     res.status(404).json({
