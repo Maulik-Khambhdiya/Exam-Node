@@ -61,3 +61,27 @@ exports.deleteData = async (req, res) => {
     });
   }
 };
+
+exports.editData = async (req, res) => {
+  try {
+    const editId = req.params.id;
+    const data = req.body;
+
+    checkData = await API.findById(editId);
+    if (!checkData) throw new Error("Data Not Found");
+
+    const updateData = await API.findByIdAndUpdate(editId, req.body, {
+      new: true,
+    });
+    res.status(200).json({
+      status: "success",
+      message: "Product Detail Edit Successfully",
+      data: updateData,
+    });
+  } catch (error) {
+    res.status(404).json({
+      status: "Fail",
+      message: error.message,
+    });
+  }
+};
